@@ -13,10 +13,16 @@ public:
     Providers(char PName[15], char PAderes[15]);
     Providers();
     ~Providers();
-    void set(char name[], char adr[]);
+    void set(char name[], char adr[], int count);
+    char* getPName();
+    char* getPAdres();
+    virtual void CountLess(int count);
+    void ProvEnter();
+    int getCount();
     //void ProvEnter();
 private:
     char PName[15], PAderes[15];
+    int count;
 };
 
 

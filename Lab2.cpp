@@ -14,6 +14,7 @@
 #include "Providers.h"
 #include "Product.h"
 #include "Chek.h"
+#include "Pay.h"
 using namespace std;
 
 static int custtype = 0, typ1count = 0, typ2count = 0;
@@ -28,7 +29,7 @@ void Scn(int* s) { // Проверка на ввод числа
     }
 }
 
-void chekMake(int ct, Customers cust[][2], Chek* ck[], Workers work, Product* prodct, int nprod) {  
+void chekMake(int ct, Customers cust[2][2], Chek* ck[], Workers work, Product* prodct, int nprod) {  
     if (ct > 2 || ct < 1)
     {
         throw "Выбран не верный пунк списка, операция отменена.";
@@ -40,7 +41,7 @@ void chekMake(int ct, Customers cust[][2], Chek* ck[], Workers work, Product* pr
         for (size_t i = 0; i < typ1count; i++)
         {
             printf("%d ", i + 1);
-            cust[ct][i].print();
+            cust[ct- 1][i].print(i);
             printf("\n");
         }
         do
@@ -56,7 +57,7 @@ void chekMake(int ct, Customers cust[][2], Chek* ck[], Workers work, Product* pr
         for (size_t i = 0; i < typ2count; i++)
         {
             printf("%d ", i + 1);
-            cust[ct][i].print();
+            cust[ct - 1][i].print(i);
             printf("\n");
         }        
         do
@@ -67,7 +68,7 @@ void chekMake(int ct, Customers cust[][2], Chek* ck[], Workers work, Product* pr
         } while (n < 1 || n > typ2count);
     }
     ck[number] = new Chek(number + 1);
-    ck[number]->Chekk(cust[ct][n], work, prodct, nprod);
+    ck[number]->Chekk(cust[ct- 1][n - 1], work, prodct, nprod);
 }
 
 int CheckPay();
@@ -78,16 +79,18 @@ int main()
     Customers cust[2][2];
     Workers work;
     Product* prodct = NULL;
+    Providers* prov = NULL;
     Chek* ck[100];
     vector<Customers> cv;
     vector<Customers> cv0;
+    
 	printf("Вводите названия на английском.\n");
     
     extern int number, custtype, typ1count, typ2count;
     int c, npost = 0, nprod = 0;
 	do //1 ур. меню
 	{
-		printf("\n1 Ввод покупателя\n2 Ввод работника\n3 Ввод товаров\n4 Составление чека\n5 Сводка по покупателям\n6 Выход\n");
+		printf("\n1 Ввод покупателя\n2 Ввод работника\n3 Работа с товарами\n4 Составление чека\n5 Сводка по покупателям\n6 Выход\n");
 		do
 		{
 			Scn(&c);
@@ -163,14 +166,62 @@ int main()
             c2 = 1;
             break;
         case 3:           
-            printf("\nВведите кол-во товаров: ");
-            Scn(&nprod);
-            prodct = new Product[nprod];
-            for (size_t i = 0; i < nprod; i++)
+            if (c3)
+            {               
+                printf("\nИзменить кол-во товаров? (0 - нет; 1 - да)\n");
+                do
+                {
+                    Scn(&c);
+                    if (c < 0 || c > 1)
+                        printf("\nОшибка. Введите корректный пункт списка.\n");
+                } while (c < 0 || c > 1);
+                if (c)
+                {
+                    printf("\nИзменить кол-во товаров у:\n0 Магазина\n1 Поставщика\n");
+                    do
+                    {
+                        Scn(&c);
+                        if (c < 0 || c > 1)
+                            printf("\nОшибка. Введите корректный пункт списка.\n");
+                    } while (c < 0 || c > 1);
+                    printf("\nУменьшить кол-во товаров на: \n");
+                    int n;
+                    Scn(&n);
+                    if (c)
+                    {
+                        for (size_t i = 0; i < nprod; i++)
+                        {
+                            prov[i].CountLess(n);
+                            prodct[i].prdprint();
+                            printf("\nНовое кол-во: %d\n", prov[i].getCount());
+                        }
+                        
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < nprod; i++)
+                        {
+                            prodct[i].CountLess(n);
+                            prodct[i].prdprint();
+                            printf("\nНовое кол-во: %d\n", prodct[i].getCount());
+                        }
+                    }
+                    
+                }
+            }
+            else
             {
-                prodct[i].ProdEnter();
-                //int* p = prodct[i].
-            }     
+                printf("\nВведите кол-во товаров: ");
+                Scn(&nprod);
+                prodct = new Product[nprod];
+                prov = new Providers[nprod];
+                for (size_t i = 0; i < nprod; i++)
+                {
+                    prodct[i].ProdEnter();
+                    prov[i].ProvEnter();
+                    //int* p = prodct[i].
+                }
+            }            
             c3 = 1;
             break;
         case 4:
@@ -258,7 +309,7 @@ int main()
                         if (strcmp(ffname, cv[i].getFName()) == 0)
                         {
                             printf("Информация о покупателе:\n");
-                            cv[i].print();
+                            cv[i].print(i);
                             puts(cv[i].getCemail());
                             printf("%d\n", cv[i].getCyear());
                             c = 0;

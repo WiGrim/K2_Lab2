@@ -40,3 +40,9 @@ int Customers::getCyear() {
 char* Customers::getCemail() {
     return email;
 }
+
+void Customers::print(int n)
+{
+    puts(getFName());
+    
+}

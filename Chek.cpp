@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <locale.h>
 #include <math.h>
+#include "Pay.h"
 
 extern int number;
 extern char aPName[], aPAdres[];
@@ -20,7 +21,6 @@ Chek::Chek(int num) : Customers(), Workers(), Product()
 Chek::~Chek()
 {
 }
-
 
 void Chek::Chekk(Customers cust, Workers work, Product prd[], int nprod) {
     num = number + 1;
@@ -44,7 +44,7 @@ void Chek::Chekk(Customers cust, Workers work, Product prd[], int nprod) {
         } while (u < 1 || u > nprod + 1);
         if (u != nprod + 1)
         {
-            n[i] = u;
+            n[i] = u - 1;
             i++;
             printf("Добавлено\n");
         }
@@ -52,9 +52,9 @@ void Chek::Chekk(Customers cust, Workers work, Product prd[], int nprod) {
 
     printf("\n***************************************************************************************************\n");
     printf("Чек\n\nПокупатель:\n");
-    cust.print();
+    cust.print(u);
     printf("Кассир:\n");
-    work.print();
+    cout << work;
     printf("Товары:\n");
     printf("Цена  *  Название\n\n");
     int sm = 0;
@@ -63,8 +63,13 @@ void Chek::Chekk(Customers cust, Workers work, Product prd[], int nprod) {
     {
         scost = prd[n[j]].fcout(scost); //указатель
     }
-    printf("\nОбщая цена: %d\n", scost);
+    printf("\nОбщая цена: %d\n", *scost);
     printf("\n***************************************************************************************************\n");
+    printf("Введите счет оплаты: ");
+    string id;
+    cin >> id;
+    Pay<string> pay{ id, "1234", *scost};
+    pay.print();
     delete[] n;
     number++;
 }

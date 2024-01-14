@@ -15,6 +15,9 @@ public:
     void operator + (int count); //Перегрузки
     int& operator ++();
     int operator ++(int);
+    Product operator = (Providers prov);
+    void CountLess(int count);
+    int getCount();
 private:
     string ProdName;//Строка
     int cost, count;

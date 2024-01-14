@@ -41,3 +41,11 @@ void Human::print()
 char* Human::getFName() {
     return fname;
 }
+
+char* Human::getLName() {
+    return lname;
+}
+
+char* Human::getTName() {
+    return tname;
+}

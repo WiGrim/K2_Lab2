@@ -44,3 +44,4 @@ int CheckPay()
     }
     return Workers::pay;
 }
+

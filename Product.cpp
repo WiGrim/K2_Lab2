@@ -18,18 +18,13 @@ Product::~Product()
 }
 
 void Product::ProdEnter() {
-
+    int Pcost;
     printf("Название товара: ");
     cin >> ProdName;
     printf("Цена: ");
     Scn(&cost); //do while
-    printf("Количество: ");
-    Scn(&count); //do while
-    printf("Поставщик: ");
-    fgets(aPName, 15, stdin);
-    printf("Адресс: ");
-    fgets(aPAdres, 15, stdin);
-    set(aPName, aPAdres);
+    printf("Количество на складе: ");
+    Scn(&count); //do while   
     //c3 = 1;
 }
 
@@ -77,3 +72,15 @@ int Product::operator ++ (int count)//Постфиксный вариант
     return n;
 }
 
+Product Product::operator= (Providers prov) { //Перегрузка оператора =
+    this->set(prov.getPName(), prov.getPAdres(), prov.getCount());
+    return *this;
+}
+
+void Product::CountLess(int count) {
+    this->count -= count;
+}
+
+int Product::getCount() {
+    return count;
+}

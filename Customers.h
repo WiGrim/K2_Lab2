@@ -11,7 +11,8 @@ public:
     void CEnter();
     int& setCyear();
     int getCyear();
-    char* getCemail();
+    char* getCemail();    
+    void print(int n);//
 private:
     char email[25];
 protected:
