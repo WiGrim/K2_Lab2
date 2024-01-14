@@ -1,52 +1,23 @@
 ﻿// Lab2.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
 //
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <stdio.h>
 #include <conio.h>
 #include <locale.h>
 #include <math.h>
+#include <string>
+#include <vector>
+#include "Human.h"
+#include "Customers.h"
+#include "Workers.h"
+#include "Providers.h"
+#include "Product.h"
+#include "Chek.h"
 using namespace std;
 
-struct Human
-{
-    char fname[10], lname[15], tname[15];
-    int tel;
-};
-
-struct Customers
-{
-    Human hum;
-    char email[25];
-};
-
-struct Workers
-{
-    Human hum;
-    int pay;
-};
-
-struct Providers
-{
-    char type[10], PName[15], PAderes[15];
-};
-
-struct Products
-{
-    Providers prov;
-    char ProdName[10];
-    int cost, count;
-};
-
-struct Chek
-{
-    Customers cust;
-    Workers work;
-    Products product[20];
-};
-
-static int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+static int custtype = 0, typ1count = 0, typ2count = 0;
+static int c1 = 0, c2 = 0, c3 = 0;
 
 void Scn(int* s) { // Проверка на ввод числа
     int scn = scanf("%d", s);
@@ -57,162 +28,66 @@ void Scn(int* s) { // Проверка на ввод числа
     }
 }
 
-void CEnter(Customers customer[]) {
-    printf("Покупатель:\nИмя: ");
-    fgets(customer[0].hum.fname, 10, stdin);
-    rewind(stdin);
-    printf("Фамилия ");
-    fgets(customer[0].hum.lname, 15, stdin);
-    rewind(stdin);
-    printf("Отчество: ");
-    fgets(customer[0].hum.tname, 15, stdin);
-    rewind(stdin);
-    printf("Телефон: ");
-    scanf("%d", &customer[0].hum.tel);
-    rewind(stdin);
-    printf("Емаил: ");
-    fgets(customer[0].email, 25, stdin);
-    rewind(stdin);
-    c1 = 1;
-}
-
-void WEnter(Workers worker[], int nwork) {
-    for (size_t i = 0; i < nwork; i++)
+void chekMake(int ct, Customers cust[][2], Chek* ck[], Workers work, Product* prodct, int nprod) {  
+    if (ct > 2 || ct < 1)
     {
-        printf("Работник:\nИмя: ");
-        fgets(worker[i].hum.fname, 10, stdin);
-        rewind(stdin);
-        printf("Фамилия ");
-        fgets(worker[i].hum.lname, 15, stdin);
-        rewind(stdin);
-        printf("Отчество: ");
-        fgets(worker[i].hum.tname, 15, stdin);
-        rewind(stdin);
-        printf("Телефон: ");
-        scanf("%d", &worker[i].hum.tel);
-        rewind(stdin);
-        printf("Зарплата: ");
-        Scn(&worker[i].pay);
+        throw "Выбран не верный пунк списка, операция отменена.";
     }
-    c2 = 1;
-}
-
-void ProvEnter(Providers providers[], int npost) {
-    for (size_t i = 0; i < npost; i++)
+    int n;
+    if (ct == 1)
     {
-        printf("Поставщик:\nНазвание: ");
-        fgets(providers[i].PName, 15, stdin);
-        rewind(stdin);
-        printf("Тип товаров: ");
-        fgets(providers[i].type, 10, stdin);
-        rewind(stdin);
-        printf("Адреса доставки: ");
-        fgets(providers[i].PAderes, 15, stdin);
-        rewind(stdin);
-    }
-    c3 = 1;
-}
-
-void ProdEnter(Products products[], Providers providers[], int npost, int nproduct) {
-    for (size_t i = 0; i < npost; i++)
-    {
-        printf("\nПоставщик #%d:\nНазвание: ", i+1);
-        puts(providers[i].PName);
-        printf("Тип товаров: ");
-        puts(providers[i].type);
-        printf("Адреса доставки: ");
-        puts(providers[i].PAderes);
-    }
-    for (size_t i = 0; i < nproduct; i++)
-    {
-        int u;
-        printf("Товар:\nВыберите поставщика: ");
-        Scn(&u);
-        products[i].prov = providers[u - 1];
-        printf("Название: ");
-        fgets(products[i].ProdName, 10, stdin);
-        rewind(stdin);
-        printf("Цена: ");
-        Scn(&products[i].cost);
-        printf("Количество: ");
-        Scn(&products[i].count);
-    }
-    c4 = 1;
-}
-
-void CChek(Customers customer[], Workers worker[], Products products[], int nwork, int nprod, Chek chek[], int nchek) {
-    chek[nchek].cust = customer[0];
-    printf("\nВыберите продавца:\n");
-    for (size_t i = 0; i < nwork; i++)
-    {
-        puts(worker[i].hum.lname);
-    }
-    printf("\n");
-    int u;
-    Scn(&u);
-    chek[nchek].work = worker[u];
-    printf("\n");
-    for (size_t i = 0; i < nprod; i++)
-    {
-        printf("%d ", i + 1);
-        puts(products[i].ProdName);
-    }
-    printf("\n%d Выход\nВыберите продукт для добавления: ", nprod + 1);
-    int i = 0;
-    do
-    {
+        printf("Выбирете покупателя:\n");
+        for (size_t i = 0; i < typ1count; i++)
+        {
+            printf("%d ", i + 1);
+            cust[ct][i].print();
+            printf("\n");
+        }
         do
         {
-            Scn(&u);
-            if (u < 1 || u > nprod + 1)
+            Scn(&n);
+            if (n < 1 || n > typ1count)
                 printf("\nОшибка. Введите корректный пункт списка.\n");
-        } while (u < 1 || u > nprod + 1);
-        if (u != nprod + 1)
-        {
-            chek[nchek].product[i] = products[u];
-            i++;
-            printf("Добавлено\n");
-        }
-    } while (u != nprod + 1);
-
-    printf("\n***************************************************************************************************\n");
-    printf("Чек\n\nПокупатель:\n");
-    puts(chek[nchek].cust.hum.fname);
-    puts(chek[nchek].cust.hum.lname);
-    puts(chek[nchek].cust.hum.tname);
-    printf("Кассир:\n");
-    puts(chek[nchek].work.hum.fname);
-    puts(chek[nchek].work.hum.lname);
-    puts(chek[nchek].work.hum.tname);
-    printf("Товары:\n");
-    printf("Цена  *  Название\n\n");
-    int scost = 0;
-    for (size_t j = 0; j < i; j++)
-    {
-        printf("%5d * ", chek[nchek].product[j].cost);
-        scost += chek[nchek].product[j].cost;
-        puts(chek[nchek].product[j].ProdName);
+        } while (n < 1 || n > typ1count);               
     }
-    printf("\nОбщая цена: %d\n", scost);
-    printf("\n***************************************************************************************************\n");
-    nchek++;
+    else
+    {
+        printf("Выбирете покупателя:\n");
+        for (size_t i = 0; i < typ2count; i++)
+        {
+            printf("%d ", i + 1);
+            cust[ct][i].print();
+            printf("\n");
+        }        
+        do
+        {
+            Scn(&n);
+            if (n < 1 || n > typ2count)
+                printf("\nОшибка. Введите корректный пункт списка.\n");
+        } while (n < 1 || n > typ2count);
+    }
+    ck[number] = new Chek(number + 1);
+    ck[number]->Chekk(cust[ct][n], work, prodct, nprod);
 }
+
+int CheckPay();
 
 int main()
 {
     setlocale(LC_ALL, "Russian");
-    Customers customer[1];
-    Workers worker[5];
-    Products products[20];
-    Providers providers[5];
-    Chek chek[10];
-
+    Customers cust[2][2];
+    Workers work;
+    Product* prodct = NULL;
+    Chek* ck[100];
+    vector<Customers> cv;
+    vector<Customers> cv0;
 	printf("Вводите названия на английском.\n");
-	int c, npost, nprod, nwork, nchek = 0;
-    extern int c1, c2, c3, c4;
+    
+    extern int number, custtype, typ1count, typ2count;
+    int c, npost = 0, nprod = 0;
 	do //1 ур. меню
 	{
-		printf("\n1 Ввод покупателя\n2 Ввод работника\n3 Ввод поставщиков\n4 Ввод товаров\n5 Составление чека\n6 Выход\n");
+		printf("\n1 Ввод покупателя\n2 Ввод работника\n3 Ввод товаров\n4 Составление чека\n5 Сводка по покупателям\n6 Выход\n");
 		do
 		{
 			Scn(&c);
@@ -222,55 +97,94 @@ int main()
         switch (c)
         {
         case 1:
-            CEnter(customer);
-            break;
-        case 2:
             do
             {
-                printf("\nВведите кол-во работников (МАКС - 5): ");
-                Scn(&nwork);
-                if (nwork < 1 || nwork > 5)
-                {
-                    printf("\nОшибка. Введите корректное кол-во.\n");
-                }
-            } while (nwork < 1 || nwork > 5);
-            WEnter(worker, nwork);
-            break;
-        case 3:
-            do
+                
+                printf("Выберите тип покупателя:\n1 Обычный\n2 VIP\n");
+                Scn(&custtype);
+                if (custtype < 1 || custtype > 2)
+                    printf("\nОшибка. Введите корректный пункт списка.\n");
+            } while (custtype < 1 || custtype > 2);
+            if (custtype == 1)
             {
-                printf("\nВведите кол-во поставщиков (МАКС - 5): ");
-                Scn(&npost);
-                if (npost < 1 || npost > 5)
-                {
-                    printf("\nОшибка. Введите корректное кол-во.\n");
-                }
-            } while (npost < 1 || npost > 5);
-            ProvEnter(providers, npost);
-            break;
-        case 4:
-            if (c3)
-            {
-                do
-                {
-                    printf("\nВведите кол-во товаров (МАКС - 20): ");
-                    Scn(&nprod);
-                    if (nprod < 1 || nprod > 20)
-                    {
-                        printf("\nОшибка. Выберите корректный id строки.\n");
-                    }
-                } while (nprod < 1 || nprod > 20);
-                ProdEnter(products, providers, npost, nprod);
+                cust[custtype - 1][typ1count].CEnter();
+                typ1count++;
             }
             else
             {
-                printf("\nОшибка. Список поставщиков пуст.\n");
-            }
-            break;
-        case 5:
-            if (c1 & c2 & c3 & c4)
+                cust[custtype - 1][typ2count].CEnter();
+                typ2count++;
+            }           
+            printf("\nУстановить возраст для покупателя? (0 - нет; 1 - да)\n");
+            do
             {
-                CChek(customer, worker, products, nwork, nprod, chek, nchek);
+                Scn(&c);
+                if (c < 0 || c > 1)
+                    printf("\nОшибка. Введите корректный пункт списка.\n");
+            } while (c < 0 || c > 1);
+            if (c)
+            {
+                if (custtype == 1)
+                {
+                    printf("Возраст: ");
+                    int n;
+                    Scn(&n);
+                    cust[custtype - 1][typ1count - 1].setCyear() = n;
+                    printf("Возраст покупателя установлен: %d", cust[custtype - 1][typ1count - 1].getCyear());
+                }
+                else
+                {
+                    printf("Возраст: ");
+                    int n;
+                    Scn(&n);
+                    cust[custtype - 1][typ2count - 1].setCyear() = n;
+                    printf("Возраст покупателя установлен: %d", cust[custtype - 1][typ2count - 1].getCyear());
+                }
+            }
+            c1 = 1;
+            break;
+        case 2:
+            work.WEnter();
+            CheckPay();
+            printf("\nУстановить новую зарплату для работников? (0 - нет; 1 - да)\n");
+            do
+            {
+                Scn(&c);
+                if (c < 0 || c > 1)
+                    printf("\nОшибка. Введите корректный пункт списка.\n");
+            } while (c < 0 || c > 1);
+            if (c)
+            {
+                printf("Зарплата работников: ");
+                int sm;
+                Scn(&sm);
+                work.setPay(sm);
+            }
+            c2 = 1;
+            break;
+        case 3:           
+            printf("\nВведите кол-во товаров: ");
+            Scn(&nprod);
+            prodct = new Product[nprod];
+            for (size_t i = 0; i < nprod; i++)
+            {
+                prodct[i].ProdEnter();
+                //int* p = prodct[i].
+            }     
+            c3 = 1;
+            break;
+        case 4:
+            if (c1 & c2 & c3)
+            {
+                int t = 0;
+                printf("Выберите тип покупателя:\n1 Обычный\n2 VIP\n");
+                Scn(&t);
+                try {
+                    chekMake(t, cust, ck, work, prodct, nprod);
+                }
+                catch (const char* err) {
+                    cout << err;
+                }
             }
             else
             {
@@ -285,11 +199,76 @@ int main()
                 }
                 if (!c3)
                 {
-                    printf("Поставщики не заполнены\n");
-                }
-                if (!c4)
-                {
                     printf("Товары не заполнены\n");
+                }
+            }
+            break;
+        case 5:
+            if (c1)
+            {
+                printf("\nСортировка проводится по годам, их необходимо установить заранее");
+                for (size_t i = 0; i < typ1count; i++)
+                {
+                    cv.push_back(cust[0][i]);
+                }
+                for (size_t i = 0; i < typ2count; i++)
+                {
+                    cv.push_back(cust[1][i]);
+                }
+                int size = cv.size();
+                printf("\nСуществуюшие возрасты покупателей:\n");
+                for (size_t i = 0; i < size; i++)
+                {
+                    printf("%d ", cv[i].getCyear());
+                }
+                cv0.push_back(cust[0][0]);
+                for (int i = 0; i < size - 1; i++) { //сортировка пузырьком
+                    for (int j = 0; j < size - i - 1; j++) {
+                        if (cv[j].getCyear() > cv[j + 1].getCyear()) {
+                            cv0[0] = cv[j];
+                            cv[j] = cv[j + 1];
+                            cv[j + 1] = cv0[0];
+                        }
+                    }
+                }
+                printf("\nОтсортированные:\n");
+                for (size_t i = 0; i < size; i++)
+                {
+                    printf("%d ", cv[i].getCyear());
+                }
+                printf("\nНайти покупателя по ФИ? (0 - нет; 1 - да)\n");
+                do
+                {
+                    Scn(&c);
+                    if (c < 0 || c > 1)
+                        printf("\nОшибка. Введите корректный пункт списка.\n");
+                } while (c < 0 || c > 1);
+                if (c)
+                {
+                    char ffname[10], llname[15];
+                    printf("\nВведите имя:\n");
+                    fgets(ffname, 10, stdin);
+                    rewind(stdin);
+                    printf("Фамилия: ");
+                    fgets(llname, 15, stdin);
+                    rewind(stdin);
+
+                    for (size_t i = 0; i < size; i++)
+                    {
+                        if (strcmp(ffname, cv[i].getFName()) == 0)
+                        {
+                            printf("Информация о покупателе:\n");
+                            cv[i].print();
+                            puts(cv[i].getCemail());
+                            printf("%d\n", cv[i].getCyear());
+                            c = 0;
+                            break;
+                        }                        
+                    }
+                    if (c)
+                    {
+                        printf("Пользователь не найден\n");
+                    }
                 }
             }
             break;
@@ -299,6 +278,7 @@ int main()
             break;
         }
 	} while (c != 6);
+    delete[] ck;
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
